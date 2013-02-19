@@ -179,6 +179,53 @@ I decided to use an enumeration for this value because I felt this was the simpl
 \end{itemize}
 
 \subsection{Testing the Database}
-In order to thoroughly test the database, I created a selection of queries to input and retrieve data from the system. 
+In order to thoroughly test the database, I created a selection of queries to input and retrieve data from the system. I have also created a selection of erroneous queries to demonstrate the constraints placed in effect the attributes.
+
+\subsubsection{Testing with Erroneous Queries}
+The first query I created demonstrates the primary key constraint that I have used to restrict the company name to be not null and unique. I have used the same technique multiple times across the implementation. When a record is inserted that has a primary key that already exists, the database with throw an error. And example of this is shown below:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/test/test-pkey.png}
+\caption{Attempting to create a record with a primary key that already exists}
+\label{fig:test-pkey}
+\end{figure}
+
+Primary key constraints also force the user to always specify a primary key, the following example fails because it leaves of the non-optional primary key field.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/test/test-pkey-empty.png}
+\caption{Attempting to create a record where the primary key is empty}
+\label{fig:test-pkey-empty}
+\end{figure}
+
+The next query that I have created demonstrates the use of a foreign key constraint on the application's table. Like the use of the primary key constraint, I have used the foreign key constraint across the design to ensure that data is correctly referenced from the right relation and that a record with a foreign key that does not exist is not inserted. Below is an example of this:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/test/test-fkey.png}
+\caption{Testing the database with a foreign key that does not exist}
+\label{fig:test-fkey}
+\end{figure}
+
+This behaviour can be used to prevent a linking table from connecting a strength or qualification that does not exist to an application, as shown in the following screenshot:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/test/test-fkey-link.png}
+\caption{Testing attempting to link a non existent foreign field to an application.}
+\label{fig:test-fkey-link}
+\end{figure}
+
+Another query shows an example of the type constraints that I have used as part of my design. Many fields require a specific type of data, such as a date. Setting the attribute to only accept data in the format of a date ensures the database only accepts correctly formatted input. An example of this is shown below:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/test/test-date.png}
+\caption{Testing the date type constraint}
+\label{fig:test-date}
+\end{figure}
+
 
 \end{document}
