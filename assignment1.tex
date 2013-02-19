@@ -1,6 +1,8 @@
 \documentclass{article}
 \usepackage[margin=2cm]{geometry}
 \usepackage{listings}
+\usepackage{float}
+\usepackage{graphicx}
 
 \lstset{basicstyle=\footnotesize, columns=fullflexible}
 
@@ -56,9 +58,9 @@ Note that we cannot simply use just a the company name or just the role to uniqu
 
 Alternative keys could include a large composite key, such as including the deadline to specify which point in time the role was offered, solving the problem with the same company offering the same role in the future, but as I have stated in my assumptions, I believe this system is only designed to by used by one user at one point in time without having to consider the same role being offered twice. Therefore be using a composite key consisting of the company name and the role as my primary key for this design.
 
-(company\_name, role) $\rightarrow$ \{company\_info, deadline, req\_strength, req\_qualifications, strength, qualification, personal\_aim, CV, covering\_letter, date\_sent, response, interview\_date, outcome, reflection\}
+(company\_name, role) $\rightarrow$ \{company\_info, deadline, req\_strength, req\_qualifications, strength, qualification, personal\_aim, CV, covering\_letter, date\_sent, response, interview\_date, outcome, feedback, reflection\}
 
-company\_name $\rightarrow$ \{company\_info\}
+company\_name $\rightarrow$ \{company\_info\}\\
 strength $\rightarrow$ \{evidence, satisfaction\}\\
 qualification $\rightarrow$ \{date, grade\}\\
 personal\_aim $\rightarrow$ \{relevance\}\\
@@ -77,7 +79,7 @@ Finally the relevance of a personal aim can again only be determined once you kn
 
 Once we identified the primary key to be used and the functional dependencies of the system, we can start normalising the structure. In first normal form we remove any repeating units from the main relation and put them in their own separate relation. Bringing the un-normalized structure given in the previous section to first normal form gives the following relations:
 
-\textbf{application}(\underline{company\_name}, \underline{role}, company\_info, deadline, CV, covering\_letter, date\_sent, response, interview\_date, outcome, reflection)
+\textbf{application}(\underline{company\_name}, \underline{role}, company\_info, deadline, CV, covering\_letter, date\_sent, response, interview\_date, outcome, feedback, reflection)
 
 \textbf{req\_strengths}(\underline{strength}, \underline{company\_name}*, \underline{role}*)
 
@@ -91,31 +93,11 @@ Once we identified the primary key to be used and the functional dependencies of
 
 In the above scheme I have removed all repeating units found in the un-normalized form along with any attributes that are functionally dependent on them from the application relation and made them into separate relation. This reduces the repetition and redundancy of data across the system. Note that I have also moved the required strengths and qualifications from the application relation as these are also repeating attributes, despite not having any other attributes being functionally dependant on them.
 
-\subsection{Second Normal Form}
+\subsection{Second \& Third Normal Form}
 
 In second normal form we must ensure that every attribute in a relation is fully functionally dependant on the primary key. This means that any attribute that is only partially dependant on the primary key for that relation must be split into a smaller relation that removes the partial dependency. By rearranging the relations specified in the preceding section we get the following structure:
 
-\textbf{application}(\underline{company\_name}*, \underline{role}, deadline, CV, covering\_letter, date\_sent, response, interview\_date, outcome, reflection)
-
-\textbf{company}(\underline{name}, information)
-
-\textbf{req\_strengths}(\underline{strength}, \underline{company\_name}*, \underline{role}*)
-
-\textbf{req\_qualifications}(\underline{qualification}, \underline{company\_name}*, \underline{role}*)
-
-\textbf{strengths}(\underline{strength}, \underline{company\_name}*, \underline{role}*, evidence, satisfaction)
-
-\textbf{qualifications}(\underline{qualification}, \underline{company\_name}*, \underline{role}*, date, grade)
-
-\textbf{aims}(\underline{personal\_aim}, \underline{company\_name}*, \underline{role}*, relevance)
-
-Company name and company information can be moved from the application relation at this stage because it is only partially functionally dependant on the primary key (specifically the company name). This also correlates with the functional dependencies outlined in section \ref{sec:func}. Therefore we can move this to its own relation.  
-
-\subsection{Third Normal Form}
-
-Third normal form requires further modification of the design to remove any transitive dependencies within the design. This is done by splitting off any non key determinants from the relation. In our design this means splitting down many of the repeating units into smaller relations to remove non key determinants. This leaves us with the following final structure:
-
-\textbf{application}(\underline{company\_name}*, \underline{role}, deadline, CV, covering\_letter, date\_sent, response, interview\_date, outcome, reflection)
+\textbf{application}(\underline{company\_name}*, \underline{role}, deadline, CV, covering\_letter, date\_sent, response, interview\_date, outcome, feedback, reflection)
 
 \textbf{company}(\underline{name}, information)
 
@@ -131,28 +113,41 @@ Third normal form requires further modification of the design to remove any tran
 
 \textbf{req\_qualifications}(\underline{qualification}, \underline{company\_name}*, \underline{role}*)
 
-\textbf{aims\_link}(\underline{personal\_aim}*, \underline{company\_name}*, \underline{role}*)
+\textbf{aims}(\underline{personal\_aim}, \underline{company\_name}*, \underline{role}*, relevance)
 
-\textbf{aims}(\underline{personal\_aim}, relevance)
+Company name and company information can be moved from the application relation at this stage because it is only partially functionally dependant on the primary key (specifically the company name). This also correlates with the functional dependencies outlined in section \ref{sec:func}. Therefore we can move this to its own relation.
 
-At this stage, I have introduced three new relations which act as linking tables. These are required to remove any transitive dependencies because some attributes are determined by an attribute that is itself determined by the primary key on the primary key (company name and role). An example transitive dependency is as follows:
+Similarly, we must move both the strengths and qualifications to their own relations as the evidence and satisfaction only depend on the strength and the date and grade only depend on the qualification. None of these attributes depend on the company name or role, and therefore are only partially dependant on there primary key in first normal form. I have also created a linking table for each of them to organise what strengths and qualifications are related to a particular application.
 
-(company\_name, role) $\rightarrow$ \{qualification, date, grade\}\\
-qualification $\rightarrow$ \{date, grade\}
+Both required strengths and required qualifications need to be adjusted at this stage because neither required strength or required qualification is partially dependant on the composite key of company and role. 
 
-(company\_name, role) $\rightarrow$ qualification $\rightarrow$ \{date, grade\}
+Likewise, the aims relation does not need to be changed as the relevance of a personal aims depends on the company name, the role and the personal aim itself because the relevance of an aim may change between roles, and companies (e.g. learning python might not be a good aim for a job that specifies it needs a Java programmer, but it is an excellent aim for a python developer).
 
-To solve this, I have introduced a relation called qualification\_link. This only contains the name of the relation and the attributes that make up the primary key. The qualifications table now only contains the name of the qualification (which acts the the key for the relation scheme) along with the date and the grade for the qualification because the date and grade are intuitively only dependent on the qualification name and not on the company name or role. I have modified the strengths and aims in a similar way for the same reasoning.
-
-Note that now the req\_qualifications and re\_strengths both cannot have transitive dependencies as they both only contain just the primary key and one other attribute. This the same for all three of the link tables. All other relations contain attributes that are only determined by the full key of the relation and not by any sub key or transitive dependency. At this point we cannot re-apply any of the normalization stages to this final structure. 
-
-I believe that the scheme presented here is the most optimal structure for the database and that there are no real further optimisations. I was considering that trying to merge strengths and qualifications with required strengths and qualifications, but because required strengths/qualifications do not have any dependant attributes while strengths and qualifications do, there is no way to merge them without having to add Nulls into many fields in the database. I feel that a cleaner structure is achieved by keeping these attributes separate.
+Since we have removed all partial dependencies from the relational structure the database design is now in second normal form. It is also the case that the steps taken in this section have removed any transitive dependencies that may have existed in first normal form, and therefore this structure in now automatically in third normal form.
 
 \section{Implementation}
 \subsection{Database Creation}
 In this section I provide a full typescript copy of the SQL statements that were executed on the database in order to created the tables and relations required.
 
-\lstinputlisting[language=sql, caption=PostgreSQL statements used to create the database]{sql/db.sql}
+% Following line imports the database creation script
+\lstinputlisting[language=sql, caption=PostgreSQL statements used to create the database]{sql/create.sql}
+
+Below I provide two screenshots showing the the execution of the preceding script on the university database and a listing of the created tables:
+
+%include screen shots of database creation
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/db-create.png}
+\caption{Executing the database creation script on the database}
+\label{fig:db-create}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/db-show-tables.png}
+\caption{The resulting tables created after the scripts execution}
+\label{fig:db-show-tables}
+\end{figure}
 
 \subsubsection{Justification of Data Types}
 In my database structure, I have used a variety of different types to create the fields used in my database. Here I provide justification of my choices of data types for each attribute used. Where there are two or more attributes representing the same thing in different tables (e.g. part of a foreign key) I will not justify there data type as they are already specified elsewhere.
@@ -170,6 +165,16 @@ In my database structure, I have used a variety of different types to create the
 \end{itemize}
 
 \item \textbf{date} - The date data type is used wherever an attribute is storing data related to a specific date. Date was chosen over other data types such as timestamp, because only knowledge of the date is required and I am assuming that there is no information regarding specific times that need to be stored. Example fields that use this in the database are qualification\_date, interview\_date and deadline.
+
+\item \textbf{result} - This is a custom enumeration that I have created to represent the state of the application's outcome. The possible values are:
+
+\begin{itemize}
+	\item ACCEPTED - If the application was successful.
+	\item REJECTED - If the application failed.
+	\item N/A - If the application is pending and has not been accepted or rejected. The outcome field will take this value by default.
+\end{itemize}
+
+I decided to use an enumeration for this value because I felt this was the simplest way to represent three distinct states that the application can be in. It also leaves the design open for extension, as more states can easily be added in the future (such as a state for pending interview or pending response etc.)
 
 \end{itemize}
 

@@ -55,4 +55,3 @@ INSERT INTO strength_link (company_name, role, strength) VALUES
 -- linking to an application where the company doesn't exist
 INSERT INTO strength_link (company_name, role, strength) VALUES
 	('Google', 'Software Engineer', 'Knows C++');
-
