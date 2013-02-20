@@ -1,6 +1,6 @@
 /*
 	CS27020 Career Planner Assignment
-	PostgreSQL for inserting data into the CS27020 assigment database
+	PostgreSQL for inserting some example data into the CS27020 assigment database
 	Author: 	Samuel Jackson (slj11@aber.ac.uk)
 	Date: 		13/2/13
 */
@@ -26,10 +26,12 @@ INSERT INTO qualifications (qualification, qualification_date, grade) VALUES
 	('Computing', '5/8/10', 'A'),
 	('Biology', '5/8/10', 'B+'),
 	('Software Engineering MEng', '2/5/12', '1:1');
+	('Robotics', '5/8/14', 'MSc'),
 
 --Create a new application
 INSERT INTO application (company_name, role, deadline, CV, covering_letter, date_sent, response, interview_date, outcome, feedback, reflection)  VALUES
 	('ISIS', 'Software Engineer', '1/3/13', 'Link to CV', 'Link to covering letter', '2/2/13', 'Link to response', '3/4/13', 'ACCEPTED', 'Some outcome', 'Could have been better'),
+	('ISIS', 'Web Developer', '1/3/13', 'http://asite.com', 'http://anothersite.com', '6/8/13', 'Link to response', '7/8/13', 'REJECTED', 'An outcome', 'Who knows'),
 	('HP', 'Web Developer', '3/3/13', 'http://www.somethinghp.com', 'http://www.someotherthing.hp', '2/2/13', 'A response', '3/5/13', 'N/A', 'What was the outcome', 'some reflection');
 
 

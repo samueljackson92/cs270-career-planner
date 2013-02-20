@@ -10,13 +10,13 @@
 SELECT * FROM application WHERE company_name='ISIS';
 
 --Listing qulifications obtained since you last applied
-SELECT * FROM qualifications WHERE qualification_date > (SELECT deadline FROM application WHERE company_name='ISIS' AND role='Software Engineer');
+SELECT * FROM qualifications WHERE qualification_date < (SELECT deadline FROM application WHERE company_name='ISIS');
 
 --List all applications that have been rejected
 SELECT * FROM application WHERE outcome='REJECTED';
 
---List all aims associated with an application
-SELECT * FROM aims WHERE company_name='ISIS' AND role='Software Engineer';
+--Find the relevance of a strength
+SELECT relevance FROM aims WHERE company_name='ISIS' AND role='Software Engineer' AND strength='Teamwork';
 
 --List all required strengths of an application
 SELECT * FROM req_strengths WHERE company_name='ISIS' AND role='Software Engineer';

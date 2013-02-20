@@ -227,5 +227,23 @@ Another query shows an example of the type constraints that I have used as part 
 \label{fig:test-date}
 \end{figure}
 
+\subsubsection{Testing the Database Operation}
+Now that I have shown that the constraints set on the database are working, I have produced several queries to show its operation. In order to demonstrate the functionality of the database, I have created an example set of data using the following sql file:
+
+\lstinputlisting[language=sql,showstringspaces=false, caption=PostgreSQL statements used to insert some example data into the database]{sql/insert.sql}
+
+The following queries demonstrate the operation of the database and how the primary and foreign keys can be used to select specific records. The first example shows how all applications to a company can be selected from the database:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/test/test-qapp.png}
+\caption{Selecting all applications made to a company}
+\label{fig:test-qapp}
+\end{figure}
+
+The next query is used to select all qualifications made since the last time an application was made to a given company. This requires the use of two select queries in one statement.
+
+
+
 
 \end{document}
