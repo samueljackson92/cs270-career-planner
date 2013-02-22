@@ -10,10 +10,18 @@
 SELECT * FROM application WHERE company_name='ISIS';
 
 --Listing qulifications obtained since you last applied
-SELECT * FROM qualifications WHERE qualification_date < (SELECT deadline FROM application WHERE company_name='ISIS');
+SELECT * FROM qualifications WHERE qualification_date > (SELECT max(deadline) FROM application WHERE company_name='ISIS');
 
 --List all applications that have been rejected
 SELECT * FROM application WHERE outcome='REJECTED';
+
+--list all applications still open deadlines, odering by closest deadline first.
+SELECT * FROM application WHERE deadline >= current_date ORDER BY deadline ASC;
+
+--list all qualifications associated with an application
+SELECT * FROM qualifications INNER JOIN qualification_link 
+ON qualifications.qualification = qualification_link.qualification
+WHERE company_name='ISIS' AND role='Software Engineer';
 
 --Find the relevance of a strength
 SELECT relevance FROM aims WHERE company_name='ISIS' AND role='Software Engineer' AND strength='Teamwork';
@@ -21,8 +29,8 @@ SELECT relevance FROM aims WHERE company_name='ISIS' AND role='Software Engineer
 --List all required strengths of an application
 SELECT * FROM req_strengths WHERE company_name='ISIS' AND role='Software Engineer';
 
---List all web developer roles
-SELECT * FROM application WHERE role='Web Developer';
+--List all roles with the word developer in the role.
+SELECT * FROM application WHERE role LIKE '%Developer%';
 
 -------------------------------------------
 -- Error Queries

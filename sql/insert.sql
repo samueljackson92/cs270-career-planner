@@ -25,8 +25,8 @@ INSERT INTO strengths (strength, evidence, satisfaction) VALUES
 INSERT INTO qualifications (qualification, qualification_date, grade) VALUES
 	('Computing', '5/8/10', 'A'),
 	('Biology', '5/8/10', 'B+'),
-	('Software Engineering MEng', '2/5/12', '1:1');
-	('Robotics', '5/8/14', 'MSc'),
+	('Software Engineering MEng', '2/5/12', '1:1'),
+	('Robotics', '5/8/14', 'MSc');
 
 --Create a new application
 INSERT INTO application (company_name, role, deadline, CV, covering_letter, date_sent, response, interview_date, outcome, feedback, reflection)  VALUES
