@@ -19,12 +19,14 @@ SELECT * FROM application WHERE outcome='REJECTED';
 SELECT * FROM application WHERE deadline >= current_date ORDER BY deadline ASC;
 
 --list all qualifications associated with an application
-SELECT * FROM qualifications INNER JOIN qualification_link 
+--order by the most recent qualification obtained
+SELECT qualifications.qualification, qualification_date, grade FROM qualifications INNER JOIN qualification_link 
 ON qualifications.qualification = qualification_link.qualification
-WHERE company_name='ISIS' AND role='Software Engineer';
+WHERE company_name='ISIS' AND role='Software Engineer'
+ORDER BY qualification_date DESC;
 
 --Find the relevance of a strength
-SELECT relevance FROM aims WHERE company_name='ISIS' AND role='Software Engineer' AND strength='Teamwork';
+SELECT relevance FROM aims WHERE company_name='ISIS' AND role='Software Engineer' AND personal_aim='Learn C++';
 
 --List all required strengths of an application
 SELECT * FROM req_strengths WHERE company_name='ISIS' AND role='Software Engineer';

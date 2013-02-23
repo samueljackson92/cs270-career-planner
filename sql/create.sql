@@ -9,6 +9,10 @@
 -- Create database using the following terminal command:
 -- psql -h db.dcs.aber.ac.uk -U slj11 -d cs27020_12_13 < create.sql
 
+
+--set the date style to be the obviously more sensible DMY format
+SET datestyle = "ISO, DMY";
+
 --Query to create the Company table
 CREATE TABLE company (
 	name 			varchar(50) PRIMARY KEY,

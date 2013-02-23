@@ -222,9 +222,9 @@ Another query shows an example of the type constraints that I have used as part 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{img/test/test-date.png}
+\includegraphics[width=0.7\textwidth]{img/test/test-error-date.png}
 \caption{Testing the date type constraint}
-\label{fig:test-date}
+\label{fig:test-error-date}
 \end{figure}
 
 \subsubsection{Testing the Database Operation}
@@ -232,18 +232,151 @@ Now that I have shown that the constraints set on the database are working, I ha
 
 \lstinputlisting[language=sql,showstringspaces=false, caption=PostgreSQL statements used to insert some example data into the database]{sql/insert.sql}
 
-The following queries demonstrate the operation of the database and how the primary and foreign keys can be used to select specific records. The first example shows how all applications to a company can be selected from the database:
+The following screen captures demonstrate how PostgreSQL queries can be used to find, sort and display the data stored in the database. The first example shows an example of how all applications to a company can be selected from the database using the following query:
+
+\begin{center}
+	\begin{lstlisting}[language=sql, showstringspaces=false]
+
+		SELECT * FROM application WHERE company_name='ISIS';
+
+	\end{lstlisting}
+\end{center}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{img/test/test-qapp.png}
+\includegraphics[width=1\textwidth]{img/test/test-qapp.png}
 \caption{Selecting all applications made to a company}
 \label{fig:test-qapp}
 \end{figure}
 
-The next query is used to select all qualifications made since the last time an application was made to a given company. This requires the use of two select queries in one statement.
+Using this type of statement clearly demonstrates how different lists of data can be recalled with minimal effort.
 
+The next query is used to select all qualifications made since the last time an application was made to a given company. This requires the use of two select queries in one statement. This demonstrates how results can be filtered using data from another table, as well as the application of in built postgreSQL (i.e. the max function) and logical operators.
 
+\begin{center}
+	\begin{lstlisting}[language=sql, showstringspaces=false]
 
+	SELECT * FROM qualifications WHERE qualification_date > 
+		(SELECT max(deadline) FROM application WHERE company_name='ISIS');
+
+	\end{lstlisting}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/test/test-date.png}
+\caption{Selecting all qualifications obtained since the date of an application}
+\label{fig:test-date}
+\end{figure}
+
+As stated earlier in this document, I have used an enumeration type for the result of an application and split this from the feedback section as given in the brief. This was so that I can easily filter applications by their current status. The following example shows how to get a list of all applications that were rejected.
+
+\begin{center}
+	\begin{lstlisting}[language=sql, showstringspaces=false]
+
+	SELECT * FROM application WHERE outcome='REJECTED';
+
+	\end{lstlisting}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\textwidth]{img/test/test-rejected.png}
+\caption{Selecting all applications that have been rejected.}
+\label{fig:test-rejected}
+\end{figure}
+
+The next query shows how data can be ordered based on the fields returned. The following example demonstrates this by selecting all applications where the deadline has not yet passed and orders them by the earliest date.
+
+\begin{center}
+	\begin{lstlisting}[language=sql, showstringspaces=false]
+
+	SELECT * FROM application WHERE deadline >= current_date 
+		ORDER BY deadline ASC;
+
+	\end{lstlisting}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\textwidth]{img/test/test-earliest-date.png}
+\caption{Selecting all applications open applications and order them by the earliest deadline.}
+\label{fig:test-earliest-date}
+\end{figure}
+
+The following, more complex, query demonstrates how data can be selected from two separate tables and combined to produce a composite results. In the example, all qualifications associated with a particular application are selected using a single query.
+
+\begin{center}
+	\begin{lstlisting}[language=sql, showstringspaces=false]
+
+		SELECT qualifications.qualification, qualification_date, grade 
+			FROM qualifications 
+			INNER JOIN qualification_link 
+			ON qualifications.qualification = qualification_link.qualification]
+			WHERE company_name='ISIS' AND role='Software Engineer'
+			ORDER BY qualification_date DESC;
+
+	\end{lstlisting}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/test/test-qual-link.png}
+\caption{Selecting all qualifications associated with a particular application.}
+\label{fig:test-qual-link}
+\end{figure}
+
+The next listing and screen shot pair shows how we can use the using the company name, role and an associated aim we can select the relevance of an aim to the application.
+
+\begin{center}
+	\begin{lstlisting}[language=sql, showstringspaces=false]
+
+		SELECT relevance FROM aims WHERE company_name='ISIS' 
+			AND role='Software Engineer' AND personal_aim='Learn C++';
+
+	\end{lstlisting}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/test/test-select-relevance.png}
+\caption{Select the relevance of a personal aim to the qualification.}
+\label{fig:test-select-relevance}
+\end{figure}
+
+The following query shows the use of the composite primary key to select a list of required strengths for a particular application.
+
+\begin{center}
+	\begin{lstlisting}[language=sql, showstringspaces=false]
+
+		SELECT * FROM req_strengths
+			WHERE company_name='ISIS' AND role='Software Engineer';
+
+	\end{lstlisting}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/test/test-req-strengths.png}
+\caption{Select a list of the required strengths for an application.}
+\label{fig:test-req-strengths}
+\end{figure}
+
+One final screen shot shows the a table can be searched for records that contains data that is like what we are looking for. In this example, I use a query to find all applications that have the word developer in them:
+
+\begin{center}
+	\begin{lstlisting}[language=sql, showstringspaces=false]
+
+		SELECT * FROM application WHERE role LIKE '%Developer%';
+		
+	\end{lstlisting}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=1\textwidth]{img/test/test-like.png}
+\caption{Select a list of job roles containing the keyword "developer".}
+\label{fig:test-like}
+\end{figure}
 
 \end{document}
