@@ -24,56 +24,56 @@ CREATE TYPE result as ENUM('ACCEPTED', 'REJECTED', 'N/A');
 
 --Query to create the Application table
 CREATE TABLE application (
-	company_name		varchar(50) REFERENCES company(name),
-	role				varchar(50),
+	company_name		varchar(100) REFERENCES company(name),
+	role				varchar(100),
 	deadline			date,
 	CV 					varchar(2000),
 	covering_letter		varchar(2000),
 	date_sent			date,
-	response			varchar,
+	response			varchar(2000),
 	interview_date		date,
 	outcome				result NOT NULL DEFAULT 'N/A',
-	feedback			varchar,
-	reflection			varchar,
+	feedback			varchar(2000),
+	reflection			varchar(2000),
 	PRIMARY KEY(company_name, role)
 );
 
 --Query to create the Strengths table
 CREATE TABLE strengths (
-	strength 		varchar(50) PRIMARY KEY,
+	strength 		varchar(100) PRIMARY KEY,
 	evidence		varchar(500),
 	satisfaction	varchar(500)
 );
 
 --Linking table for Strengths
 CREATE TABLE strength_link (
-	strength 		varchar(50) REFERENCES strengths(strength),
-	company_name	varchar(50), 
-	role			varchar(50),
+	strength 		varchar(100) REFERENCES strengths(strength),
+	company_name	varchar(100), 
+	role			varchar(100),
 	FOREIGN KEY (company_name, role) REFERENCES application(company_name, role),
 	PRIMARY KEY(strength, company_name, role)
 );
 
 --Query to create Qualifications table
 CREATE TABLE qualifications (
-	qualification 		varchar(50) PRIMARY KEY,
+	qualification 		varchar(100) PRIMARY KEY,
 	qualification_date	date,
 	grade				varchar(3) NOT NULL
 );
 
 --Linking table for Qualifications
 CREATE TABLE qualification_link (
-	qualification 	varchar(50)	REFERENCES qualifications(qualification),
-	company_name	varchar(50),
-	role			varchar(50),
+	qualification 	varchar(100)	REFERENCES qualifications(qualification),
+	company_name	varchar(100),
+	role			varchar(100),
 	FOREIGN KEY (company_name, role) REFERENCES application(company_name, role),
 	PRIMARY KEY(qualification, company_name, role)
 );
 
 --Query to create the aims table
 CREATE TABLE aims (
-	company_name 	varchar(50),
-	role			varchar(50),
+	company_name 	varchar(100),
+	role			varchar(100),
 	personal_aim	varchar(500),
 	relevance		varchar(500),
 	FOREIGN KEY (company_name, role) REFERENCES application(company_name, role),
@@ -82,18 +82,18 @@ CREATE TABLE aims (
 
 --Query to create the table of required strengths
 CREATE TABLE req_strengths (
-	strength 		varchar(50),
-	company_name	varchar(50),
-	role			varchar(50),
+	strength 		varchar(100),
+	company_name	varchar(100),
+	role			varchar(100),
 	FOREIGN KEY (company_name, role) REFERENCES application(company_name, role),
 	PRIMARY KEY(strength, company_name, role)
 );
 
 --Query to create the table of required qualifications
 CREATE TABLE req_qualifications (
-	qualification 	varchar(50),
-	company_name	varchar(50),
-	role			varchar(50),
+	qualification 	varchar(100),
+	company_name	varchar(100),
+	role			varchar(100),
 	FOREIGN KEY (company_name, role) REFERENCES application(company_name, role),
 	PRIMARY KEY(qualification, company_name, role)
 );
