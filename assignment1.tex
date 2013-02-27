@@ -34,19 +34,19 @@ Using the application form document provided in the brief, the following structu
 (qualification, date, grade) Repeats for each qualification.\\
 (personal\_aim, relevance) Repeats for each personal aim.\\
 
-Note that in the above outline I have shortened some of the attribute names to more concise abbreviations (e.g. Required Strength to ReqStrength).
+Note that in the above outline I have shortened some of the attribute names to more concise abbreviations (e.g. Required Strength to req\_strength).
 
 \subsubsection{Assumptions}
 
-In the above un-normalized form I have made several assumptions based on the document given by the brief to work from and of my own intuition. They are as follows:
+In the above un-normalized form I have made several assumptions about the attributes of the database based on the example document given by the brief to work from and of my own intuition. They are as follows:
 
-The database is designed to handle the application forms of one user. In the brief there is no mention of the system having to handle any other users and therefore I have made the assumption that this database will only hold applications from one user at any one time. If we were to store the applications of two or more users, we would have no way of distinguishing one uses data from another.
+The database is designed to handle the application forms from just one user. In the brief there is no mention of the system having to handle any other users and therefore I have made the assumption that this database will only hold applications from one user at any one time. If we were to store the applications of two or more users, we would have no way of distinguishing one uses data from another.
 
-One major assumption I have made about the data is that the name of each company is unique. I feel that this is justified because generally speaking, most companies do have distinct names from one another. However, it is possible that two companies may exist with the same name and same role offered (particularly if, for example its the same company but for a position in another country).
+One major assumption I have made about the data is that the name of each company is unique. I feel that this is justified because generally speaking, most companies do have distinct names from one another. However, it is possible that two companies may exist with the same name and same role offered (particularly if, for example its the same company but for a position in another country). However, for the purposes of this document, I have assumed all company names to be unique.
 
 Another assumption I have made is that, for each of the repeating attributes and their functional dependencies (such as qualifications, date and grade), the user may want to have more than simply three different entries as shown in the provided application form. I have therefore not considered any limit to these attributes and assume that each application can store an unspecified amount for each of these attributes.
 
-I have also assumed that a job applicant will only ever apply to the same role at the same company once. For example, my design cannot be used to apply to the same role at the same company but at another point in time. You could solve this problem by using the deadline for each application to further uniquely identify each application at a specific point in time. You could also accomplish the same result by adding an unique ID for each application.
+I have also assumed that a job applicant will only ever apply to the same role at the same company once. For example, my design cannot be used to apply to the same role at the same company but at another point in time, unless the previous application was removed first. You could solve this problem by using the deadline for each application to further uniquely identify each application at a specific point in time. You could also accomplish the same result by adding an unique ID for each application.
 
 Leading on from this, I have also assumed that the user will not make more than one application to the same company with the same role at the same time. I feel that these two assumptions can be justified by the fact that Jo's job hunt is unlikely to last so long that she begins to apply to the exact same position in the same company again and again.
 
@@ -54,15 +54,17 @@ Another assumption I have made is that much of the documentation used for each a
 
 In relation to both the qualifications and required qualifications fields, I have assumed that each qualification name will also specify the type of qualification level. E.g. A application may have the qualifications "GCSE Biology" and "A Level Biology" associated with it. Otherwise, there would be no way to tell the difference between these two qualifications.
 
-I have assumed that the outcome of field of the document as well as providing feedback with also clearly state the whether the application was successful or not. In my database design, this field will be left as pending while the application is still in review.
+Finally, I have assumed that the outcome of field of the document as well as providing feedback with also clearly state the whether the application was successful or not. In my database design, this field will be left as pending while the application is still in review.
 
 \subsubsection{Functional Dependencies}
 \label{sec:func}
-Below are the functional dependencies for the un-normalized structure, including the repeating units. The majority of the attributes are dependant on the company name and role. This suggests that company name and role are a composite key and are an excellent candidate for the primary key. This is because all of the data applied for can be uniquely identified by the name of the company and the role applied for within that company. 
+Below are the functional dependencies for the un-normalized structure, including the repeating units. The majority of the attributes are dependant on the company name and role. This suggests that company name and role are a composite key and are an excellent candidate for the primary key. This is because most of the data for a specific application can be uniquely identified by the name of the company and the role applied for within that company. 
 
 Note that we cannot simply use just a the company name or just the role to uniquely identify a data because a company may have many roles and the same role may be offered by many companies. Therefore the primary key must be a composite key consisting of both attributes. 
 
 Alternative keys could include a large composite key, such as including the deadline to specify which point in time the role was offered, solving the problem with the same company offering the same role in the future, but as I have stated in my assumptions, I believe this system is only designed to by used by one user at one point in time without having to consider the same role being offered twice. Therefore be using a composite key consisting of the company name and the role as my primary key for this design.
+
+I feel that this is a good choice of primary key because it makes good logical sense and because all attributes are either wholly, partially or transitively dependant on this key. It is also fairly concise and therefore reduces the amount of data redundancy (as opposed to using a larger subset of attributes for unique identification).
 
 (company\_name, role) $\rightarrow$ \{company\_info, deadline, req\_strength, req\_qualifications, strength, qualification, personal\_aim, CV, covering\_letter, date\_sent, response, interview\_date, outcome, feedback, reflection\}
 
@@ -71,15 +73,17 @@ strength $\rightarrow$ \{evidence, satisfaction\}\\
 qualification $\rightarrow$ \{date, grade\}\\
 personal\_aim $\rightarrow$ \{relevance\}\\
 
-Working through the functional dependencies in turn, we can see that the company name and role advertised is enough to determine when the application deadline is, the various requirements for the role (Qualifications, Strengths etc.) as well as the documentation that is required for it, such as a CV and covering letter. 
+Working through the functional dependencies in turn, we can see that the company name and role advertised is enough to determine when the application deadline is, the various requirements for the role (Qualifications, Strengths etc.) as well as the documentation that is required for it, such as a CV and covering letter as each of these attributes are dependant upon both the company and a specific role. 
 
-Information about the company is obviously dependant on the name of the company and therefore does not require information of the role to determine it.
+Information about the company is obviously only dependant on the name of the company and therefore does not require knowledge of the role to determine it.
 
 The attributes evidence and satisfaction can be determined by the just the name of the personal strength as the evidence and satisfaction given by the strength is obviously dependant on what the strength actually is.
 
 Similarly, the attributes of date and grade are dependant on what the qualification actually is.
 
 Finally the relevance of a personal aim can again only be determined once you know what the aim actually is and therefore the relevance of an aim relies of the individual aim alone.
+
+Note that each of these additional functional dependencies are also dependant on the company name and role (excluding the company info, which is only partially dependant), further supporting the argument for using company name and role as a composite primary key.
 
 \subsection{First Normal Form}
 
@@ -97,7 +101,7 @@ Once we identified the primary key to be used and the functional dependencies of
 
 \textbf{aims}(\underline{personal\_aim}, \underline{company\_name}*, \underline{role}*, relevance)
 
-In the above scheme I have removed all repeating units found in the un-normalized form along with any attributes that are functionally dependent on them from the application relation and made them into separate relation. This reduces the repetition and redundancy of data across the system. Note that I have also moved the required strengths and qualifications from the application relation as these are also repeating attributes, despite not having any other attributes being functionally dependant on them.
+In the above scheme I have removed all repeating units found in the un-normalized form along with any attributes that are functionally dependent on them from the application relation and made them into a separate relation. This reduces the repetition and redundancy of data across the system. Note that I have also moved the required strengths and qualifications from the application relation as these are also repeating attributes, despite not having any other attributes being functionally dependant on them.
 
 \subsection{Second \& Third Normal Form}
 
@@ -123,17 +127,17 @@ In second normal form we must ensure that every attribute in a relation is fully
 
 Company name and company information can be moved from the application relation at this stage because it is only partially functionally dependant on the primary key (specifically the company name). This also correlates with the functional dependencies outlined in section \ref{sec:func}. Therefore we can move this to its own relation.
 
-Similarly, we must move both the strengths and qualifications to their own relations as the evidence and satisfaction only depend on the strength and the date and grade only depend on the qualification. None of these attributes depend on the company name or role, and therefore are only partially dependant on there primary key in first normal form. I have also created a linking table for each of them to organise what strengths and qualifications are related to a particular application.
+Similarly, we must move both the strengths and qualifications to their own relations as the evidence and satisfaction only depend on the strength and the date and grade only depend on the qualification. None of these attributes depend entirely on the company name, role and strength/qualification and therefore are only partially dependant on their relation's primary key in first normal form. I have also created a linking table for each of them to organise what strengths and qualifications are related to a particular application.
 
-Both required strengths and required qualifications need to be adjusted at this stage because neither required strength or required qualification is partially dependant on the composite key of company and role. 
+Both required strengths and required qualifications need not be adjusted at this stage because neither required strength nor required qualification is partially dependant on the composite key of company and role. 
 
-Likewise, the aims relation does not need to be changed as the relevance of a personal aims depends on the company name, the role and the personal aim itself because the relevance of an aim may change between roles, and companies (e.g. learning python might not be a good aim for a job that specifies it needs a Java programmer, but it is an excellent aim for a python developer).
+Likewise, the aims relation does not need to be changed as the relevance of a personal aims depends on the company name, the role and the personal aim itself because the relevance of an aim may change between roles, and companies (e.g. learning python might not be a good aim for a job that specifies it needs a Java programmer, but it is an excellent aim for a Python developer).
 
-Since we have removed all partial dependencies from the relational structure the database design is now in second normal form. It is also the case that the steps taken in this section have removed any transitive dependencies that may have existed in first normal form, and therefore this structure in now automatically in third normal form.
+Since we have removed all partial dependencies from the relational structure the database design is now in second normal form. It is also the case that the steps taken in this section have removed any transitive dependencies that may have existed in first normal form, and therefore this structure is now automatically in third normal form and normalization is complete.
 
 \section{Implementation}
 \subsection{Database Creation}
-In this section I provide a full typescript copy of the SQL statements that were executed on the database in order to created the tables and relations required.
+In this section I provide a full typescript copy of the SQL statements that were executed on the database in order to create the tables and relations outlined in the previous section.
 
 % Following line imports the database creation script
 \lstinputlisting[language=sql, caption=PostgreSQL statements used to create the database]{sql/create.sql}
@@ -159,16 +163,16 @@ Below I provide two screenshots showing the the execution of the preceding scrip
 In my database structure, I have used a variety of different types to create the fields used in my database. Here I provide justification of my choices of data types for each attribute used. Where there are two or more attributes representing the same thing in different tables (e.g. part of a foreign key) I will not justify there data type as they are already specified elsewhere.
 
 \begin{itemize}
-\item \textbf{varchar} - I have used the varchar data type for fields in my design where I can potentially limit the number of characters required to a reasonable number. Examples of this include company name, strength, required strength, qualification, required qualification. This is because it can be assumed that each of these attributes can be described in (or abbreviated to) less than 100 characters. There are a couple of exceptions to the 100 character limit discussed below:
+\item \textbf{varchar} - I have used the varchar data type for fields in my design where I can potentially limit the number of characters required to a reasonable number. Examples of this include company name, strength, required strength, qualification, required qualification. This is because it can be assumed that each of these attributes can be described in (or abbreviated to) less than 100 characters. The arbitrary choice of 100 characters was made as this seemed like a fairly reasonable size considering the type of data likely to stored in this field. There are a couple of exceptions to the 100 character limit discussed below:
 
 \begin{itemize}
-\item Attributes such as the personal\_aim and relevance of aims and the evidence and satisfaction of strengths have been set to have a character limit of 500. This is because even though it is not certain how large the data in these fields are likely to be, I feel 500 characters is a reasonable amount of space to specify these characteristics.
+\item Attributes such as the personal aim and relevance of aims and the evidence and satisfaction of strengths have been set to have a character limit of 500. This is because even though it is not certain how large the data in these fields are likely to be, it will most likely require more space than 100 characters, and I feel 500 characters is a reasonable amount of space to specify these characteristics.
 
-\item The grade of a qualification has a character limit of 3. This is so that the field can store both letter grades such as A++, B or C- as well as being able to store degree level qualification grades such as 1:1, 2:1, 2:2 etc. 
+\item The grade of a qualification has a character limit of 3. This is so that the field can store both letter grades such as A++, B or C- as well as being able to store degree level qualification grades such as 1:1, 2:1, 2:2, MSc, Phd etc. 
 
 \item Attributes relating to large data fields that are supposedly going to contain URL links rather than actual data (such as CV and company information), have been set to be a varchar with the length of 2000 characters. This is because web browsers such as IE do not support URL lengths much above this limit.\footnote{http://support.microsoft.com/kb/208427}
 
-\item Additionally, I have also set some large attributes such as feedback and reflection to be a varchar of 2000 characters because I am unsure if this will entered as a link to the information (see above) or will be directly entered into the database. If the former is the case that 2000 characters are needed to support the maximum practical URL length, while if the latter is the case then 200 characters should be plenty of space to allow direct input of the data into a record.
+\item Additionally, I have also set some large attributes such as feedback and reflection to be a varchar of 2000 characters because I am unsure if this will entered as a link to the information (see above) or will be directly entered into the database. If the former is the case then 2000 characters are needed to support the maximum practical URL length, while if the latter is the case then 2000 characters should be plenty of space to allow direct input of the data into a record.
 
 \end{itemize}
 
@@ -236,7 +240,7 @@ Another query shows an example of the type constraints that I have used as part 
 \end{figure}
 
 \subsubsection{Testing the Database Operation}
-Now that I have shown that the constraints set on the database are working, I have produced several queries to show its operation. In order to demonstrate the functionality of the database, I have created an example set of data using the following sql file:
+Now that I have shown that the constraints set on the database are working, I have produced several queries to show its operation. Note that this section contains several screen shots of console output with very wide output which is difficult to fit to the width of a page, however the screen shots are of high enough resolution to allow the reader to zoom in and view them more clearly. In order to demonstrate the functionality of the database, I have created an example set of data using the following sql file:
 
 \lstinputlisting[language=sql,showstringspaces=false, caption=PostgreSQL statements used to insert some example data into the database]{sql/insert.sql}
 
